@@ -99,7 +99,7 @@ def eval_metric(results, thr='auto', type='acc', res_dir=None):
         thre = min_score + i * s_step
         thrs.append(thre)
         result = results.copy()
-        result[:, 0] = (results[:, 0] > thre).astype(np.float)
+        result[:, 0] = (results[:, 0] > thre).astype(np.float64)
         result = result.astype(np.int)
         score = eval_tool(result, is_print=False)
         scores.append(score)
