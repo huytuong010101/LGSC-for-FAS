@@ -2,6 +2,7 @@
 import paddle.fluid as fluid
 from models.scan import SCAN
 from utils.runner import Runnner
+from dataset.faceforensics import FaceForensics
 
 model_cfg = dict(
     backbone=dict(
