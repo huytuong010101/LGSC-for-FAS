@@ -203,6 +203,7 @@ class Runnner(object):
             for epoch in range(max_epochs):
                 print(f">> Start training epoch {epoch}")
                 for iter, datas in enumerate(train_loader()):
+                    self.val()
                     iter_times += time.time() - start_time
                     start_time = time.time()
                     iter = epoch * iter_per_epoch + iter
