@@ -5,7 +5,23 @@ from .util import draw_roc
 from .statistic import get_EER_states, get_HTER_at_thr
 from sklearn.metrics import roc_auc_score
 from sklearn.metrics import classification_report
+from sklearn.metrics import roc_curve, auc
+import numpy as np
 
+def get_err_threhold(fpr, tpr, threshold):
+    RightIndex=(tpr+(1-fpr)-1); 
+    right_index = np.argmax(RightIndex)
+    best_th = threshold[right_index]
+    err = fpr[right_index]
+
+    differ_tpr_fpr_1=tpr+fpr-1.0
+  
+    right_index = np.argmin(np.abs(differ_tpr_fpr_1))
+    best_th = threshold[right_index]
+    err = fpr[right_index]    
+
+    #print(err, best_th)
+    return err, best_th
 
 def eval_acer(results, is_print=False):
     """
@@ -89,7 +105,7 @@ def eval_metric(results, thr='auto', type='acc', res_dir=None):
         results[:, 0] = (results[:, 0] > thr).astype(np.float)
         results = results.astype(np.int)
         return eval_tool(results, is_print=True)
-
+    """
     min_score = results[:, 0].min()
     max_score = results[:, 0].max()
     s_step = (max_score - min_score) / 1000
@@ -109,6 +125,10 @@ def eval_metric(results, thr='auto', type='acc', res_dir=None):
         best_thr = results[sinds[int(results.shape[0]/2)-1], 0]
     else:
         best_thr = thrs[max_ind]
+    """
+    fpr_test,tpr_test,threshold_test = roc_curve(results[:, 1], results[:, 0], pos_label=0)
+    err_test, best_test_threshold = get_err_threhold(fpr_test, tpr_test, threshold_test)
+    best_thr = best_test_threshold
     print('Best Threshold: {:.4f}'.format(best_thr))
     save_results = np.zeros((results.shape[0], 3))
     save_results[:, 2] = results[:, 0]
