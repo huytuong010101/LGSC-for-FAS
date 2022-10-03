@@ -167,9 +167,11 @@ class FaceForensics(DatasetBase):
                 if self.crop_face:
                     img = self._get_face(img, thr=self.crop_face)
                 # img = np.flip(img, axis=1)
+                img = imutils.resize(img,height=350) # sorry bacause hard code =((
                 h, w, _ = img.shape
+                scale_h, scale_w = self.img_scale
                 center_h, center_w = h//2, w//2
-                img = img [center_h-112:center_h+112,center_w-112:center_w+112, :]
+                img = img [center_h-scale_h//2:center_h+scale_h//2,center_w-center_w//2:center_w+center_w//2, :]
                 img = self.img_transform(img, self.img_scale)
                 yield img, label
 
