@@ -4,6 +4,7 @@ import numpy as np
 from .util import draw_roc
 from .statistic import get_EER_states, get_HTER_at_thr
 from sklearn.metrics import roc_auc_score
+from sklearn.metrics import classification_report
 
 
 def eval_acer(results, is_print=False):
@@ -60,6 +61,7 @@ def eval_acc(results, is_print=False):
         print('ACC   Pos')
         print('{:.2f}  {}'.format(acc, int(results[:, 0].sum())))
         print('*****************')
+        print(classification_report(results[:, 1], results[:, 0]))
     return acc
 
 
@@ -118,6 +120,3 @@ def eval_metric(results, thr='auto', type='acc', res_dir=None):
         with open(res_dir, 'wb') as file:
             pickle.dump(save_results, file)
     return eval_score
-
-
-
