@@ -5,6 +5,7 @@ import paddle
 import paddle.fluid as fluid
 import numpy as np
 import cv2
+from tqdm import tqdm
 from .eval import eval_metric
 
 
@@ -156,13 +157,15 @@ class Runnner(object):
                         self._show_cue(imgs, label, cue, i)        
 
         score = eval_metric(results, thr=thr, type=self.eval_type, res_dir=self.checkpoint_config['work_dir'])
-        self.logger.info('Best {}:{:.2f}'.format(self.eval_type, score))
+        # self.logger.info('Best {}:{:.2f}'.format(self.eval_type, score))
+        print('[INFO] Best {}:{:.2f}'.format(self.eval_type, score))
 
     def val(self):
         results = []
         self.model.eval()
         test_loader = paddle.batch(self.val_dataset.test(), batch_size=self.val_batch_size, drop_last=False)
-        for iter, datas in enumerate(test_loader()):
+        print(f">> Start evaluate")
+        for iter, datas in tqdm(enumerate(test_loader())):
             batch_size = len(datas)
             imgs = np.array([data[0] for data in datas]).astype(np.float32)
             label = np.array([data[1] for data in datas]).astype(np.int64).reshape(-1, 1)
@@ -198,7 +201,8 @@ class Runnner(object):
             start_time = time.time()
             iter_times = 0
             for epoch in range(max_epochs):
-                for iter, datas in enumerate(train_loader()):
+                print(f">> Start training epoch {epoch}")
+                for iter, datas in tqdm(enumerate(train_loader())):
                     iter_times += time.time() - start_time
                     start_time = time.time()
                     iter = epoch * iter_per_epoch + iter
@@ -232,12 +236,14 @@ class Runnner(object):
                         iters = 1 if iter == 0 else self.log_interval
                         eta = (max_epochs * iter_per_epoch - iter) * iter_times / iters
                         iter_times = 0
-                        self.logger.info(self._log_infos(losses, epoch, iter, eta, lr, best_score))
+                        # self.logger.info(self._log_infos(losses, epoch, iter, eta, lr, best_score))
+                        print("[INFO]" + self._log_infos(losses, epoch, iter, eta, lr, best_score))
 
                     if iter and iter % self.checkpoint_config['save_interval'] == 0 and save_parameters:
                         self.save_checkpoint(epoch, iter)
 
-            self.logger.info('Best model save from iter {}'.format(best_iter))
+            # self.logger.info('Best model save from iter {}'.format(best_iter))
+            print('[INFO] Best model save from iter {}'.format(best_iter))
 
 
 
