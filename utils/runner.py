@@ -165,7 +165,7 @@ class Runnner(object):
         self.model.eval()
         test_loader = paddle.batch(self.val_dataset.test(), batch_size=self.val_batch_size, drop_last=False)
         print(f">> Start evaluate")
-        for iter, datas in tqdm(enumerate(test_loader())):
+        for iter, datas in enumerate(test_loader()):
             batch_size = len(datas)
             imgs = np.array([data[0] for data in datas]).astype(np.float32)
             label = np.array([data[1] for data in datas]).astype(np.int64).reshape(-1, 1)
@@ -202,7 +202,7 @@ class Runnner(object):
             iter_times = 0
             for epoch in range(max_epochs):
                 print(f">> Start training epoch {epoch}")
-                for iter, datas in tqdm(enumerate(train_loader())):
+                for iter, datas in enumerate(train_loader()):
                     iter_times += time.time() - start_time
                     start_time = time.time()
                     iter = epoch * iter_per_epoch + iter
@@ -210,7 +210,7 @@ class Runnner(object):
                     save_parameters = (not self.multi_gpus) or (
                             self.multi_gpus and fluid.dygraph.parallel.Env().local_rank == 0)
 
-                    if iter % self.checkpoint_config['eval_interval'] == 0 and save_parameters:
+                    if (iter + 1) % self.checkpoint_config['eval_interval'] == 0 and save_parameters:
                         score = self.val()
                         if score > best_score:
                             best_score = score
@@ -231,7 +231,7 @@ class Runnner(object):
                     optimizer.minimize(loss)
                     self.model.clear_gradients() 
 
-                    if iter % self.log_interval == 0:
+                    if (iter + 1) % self.log_interval == 0:
                         lr = optimizer.current_step_lr()
                         iters = 1 if iter == 0 else self.log_interval
                         eta = (max_epochs * iter_per_epoch - iter) * iter_times / iters
