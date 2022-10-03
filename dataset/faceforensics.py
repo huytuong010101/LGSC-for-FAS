@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-from .datasetbase import DatasetBase
+from dataset.datasetbase import DatasetBase
 
 
 class FaceForensics(DatasetBase):
@@ -135,7 +135,6 @@ class FaceForensics(DatasetBase):
                                         *[p for p in img_info['img_path'].split('/')[-7:]])
                 label = img_info['label']
                 img = cv2.imread(img_path)
-
                 mask = self._get_mask(self.kp_dict[img_info['img_path']],
                                       img) if self.with_mask else np.zeros_like(img)
 
@@ -161,16 +160,17 @@ class FaceForensics(DatasetBase):
     def test(self):
         def reader():
             for img_info in self.img_infos:
-                img_path = os.path.join(self.img_prefix,
-                                        *[p for p in img_info['img_path'].split('/')[-2:]])
+                img_path = os.path.join(self.img_prefix, img_info['img_path'])
                 label = img_info['label']
                 img = cv2.imread(img_path)
-
+                # print(img_path)
                 if self.crop_face:
                     img = self._get_face(img, thr=self.crop_face)
                 # img = np.flip(img, axis=1)
+                h, w, _ = img.shape
+                center_h, center_w = h//2, w//2
+                img = img [center_h-112:center_h+112,center_w-112:center_w+112, :]
                 img = self.img_transform(img, self.img_scale)
                 yield img, label
 
         return reader
-
