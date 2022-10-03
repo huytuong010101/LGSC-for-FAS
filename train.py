@@ -1,7 +1,7 @@
+# %load /kaggle/working/LGSC-for-FAS/train.py
 import paddle.fluid as fluid
 from models.scan import SCAN
 from utils.runner import Runnner
-from dataset.faceforensics import FaceForensics
 
 model_cfg = dict(
     backbone=dict(
@@ -23,14 +23,15 @@ model_cfg = dict(
     test_cfg=dict(
         thr=0.5),
     pretrained='./pretrained/resnet18-torch',
+#    pretrained=None,
 )
 
 checkpoint_cfg = dict(
-    work_dir='./work_dir/ff_add_val',
-    load_from='./work_dir/ff_c23/Best_model',
+    work_dir='./checkpoint/ff_add_val',
+    load_from='./checkpoint/ff_c23/Best_model',
     save_interval=10000,
     eval_interval=200,
-    log_interval=10,
+    log_interval=5,
     eval_type='acc'
 )
 
@@ -64,25 +65,25 @@ extra_aug = dict(
         w_h=(0.12, 0.12))
 )
 
-data_root = 'Path/FaceForensics/data/'
+data_root = '/'
 train_dataset = FaceForensics(
     img_prefix=data_root,
-    ann_file=data_root + 'train_add_train.txt',
+    ann_file='/kaggle/working/train.txt',
     mask_file=None,
     img_scale=(224, 224),
     img_norm_cfg=dict(mean=(100, 100, 100), std=(80, 80, 80)),
     extra_aug=extra_aug,
-    crop_face=0.1,
+    crop_face=False,
 )
 
 val_dataset = FaceForensics(
     img_prefix=data_root,
-    ann_file=data_root + 'train_val_train.txt',
+    ann_file='/kaggle/working/valid.txt',
     img_scale=(224, 224),
     img_norm_cfg=dict(mean=(100, 100, 100), std=(80, 80, 80)),
     extra_aug=dict(),
     test_mode=True,
-    crop_face=0.1,
+    crop_face=False,
 )
 
 
@@ -93,9 +94,8 @@ runner = Runnner(
     model,
     train_dataset,
     val_dataset=val_dataset,
-    batch_size=96,
+    batch_size=64,
     checkpoint_config=checkpoint_cfg,
     optimizer_config=optimizer_cfg)
 
 runner.train(max_epochs=15)
-
