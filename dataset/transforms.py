@@ -23,7 +23,7 @@ class ImageTransform(object):
     def __call__(self, img, scale, mask=None, flip=False):
         # Dont resize it, i resized before
         # img = cv2.resize(img, scale, interpolation=cv2.INTER_LINEAR)
-        print(tuple(img.shape[:2]), scale)
+        # print(tuple(img.shape[:2]), scale)
         assert tuple(img.shape[:2]) == scale
         img = np.float32(img) if img.dtype != np.float32 else img.copy()
         if self.to_rgb:
