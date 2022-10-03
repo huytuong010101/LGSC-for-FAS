@@ -57,15 +57,18 @@ extra_aug = dict(
         probability=0.5,
         area=(0.01, 0.03),
         mean=(80, 80, 80)),
-    random_cutout=dict(
-        probability=0.5,
-        max_edge=20),
-    ramdom_rotate=dict(
-        probability=0.5,
-        angle=30),
-    ramdom_crop=dict(
-        probability=0.5,
-        w_h=(0.12, 0.12))
+    random_cutout=None,
+    ramdom_rotate=None,
+    ramdom_crop=None,
+    #random_cutout=dict(
+    #    probability=0.5,
+    #    max_edge=20),
+    #ramdom_rotate=dict(
+    #    probability=0.5,
+    #    angle=30),
+    #ramdom_crop=dict(
+    #    probability=0.5,
+    #    w_h=(0.12, 0.12))
 )
 
 data_root = '/'
