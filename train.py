@@ -34,7 +34,7 @@ checkpoint_cfg = dict(
     load_from='./checkpoint/ff_c23/Best_model',
     save_interval=10000,
     eval_interval=200,
-    log_interval=5,
+    log_interval=100,
     eval_type='acc'
 )
 
