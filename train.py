@@ -32,9 +32,9 @@ model_cfg = dict(
 checkpoint_cfg = dict(
     work_dir='./checkpoint/ff_add_val',
     load_from='./checkpoint/ff_c23/Best_model',
-    save_interval=10000,
-    eval_interval=200,
-    log_interval=100,
+    save_interval=1000,
+    eval_interval=500,
+    log_interval=250,
     eval_type='acc'
 )
 
@@ -48,18 +48,20 @@ optimizer_cfg = dict(
 )
 
 extra_aug = dict(
-    photo_metric_distortion=dict(
-        brightness_delta=32,
-        contrast_range=(0.5, 1.5),
-        saturation_range=(0.8, 1.2),
-        hue_delta=16),
-    random_erasing=dict(
-        probability=0.5,
-        area=(0.01, 0.03),
-        mean=(80, 80, 80)),
+    #photo_metric_distortion=dict(
+    #    brightness_delta=32,
+    #    contrast_range=(0.5, 1.5),
+    #    saturation_range=(0.8, 1.2),
+    #    hue_delta=16),
+    #random_erasing=dict(
+    #    probability=0.5,
+    #    area=(0.01, 0.03),
+    #    mean=(80, 80, 80)),
     random_cutout=None,
     ramdom_rotate=None,
     ramdom_crop=None,
+    photo_metric_distortion=None,
+    random_erasing=None,
     #random_cutout=dict(
     #    probability=0.5,
     #    max_edge=20),
@@ -104,4 +106,4 @@ runner = Runnner(
     checkpoint_config=checkpoint_cfg,
     optimizer_config=optimizer_cfg)
 
-runner.train(max_epochs=15)
+runner.train(max_epochs=30)
